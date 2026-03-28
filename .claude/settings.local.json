@@ -24,7 +24,8 @@
       "Bash(TOKEN=\"51016507619180924665597559307500966371300359990730628147295374239685630001225\" curl -s \"https://clob.polymarket.com/prices-history?market=$TOKEN&interval=1w&fidelity=60\")",
       "Bash(python3 -c \"import json,sys; print\\(''''midpoint:'''', json.load\\(sys.stdin\\)\\)\")",
       "Bash(python3 -c \"import json,sys; d=json.load\\(sys.stdin\\); print\\(json.dumps\\(d.get\\(''''scripts'''', {}\\), indent=2\\)\\)\")",
-      "Bash(python3:*)"
+      "Bash(python3:*)",
+      "Skill(update-config)"
     ]
   }
 }
