@@ -1,0 +1,13 @@
+{
+  "permissions": {
+    "allow": [
+      "WebSearch",
+      "WebFetch(domain:ui.shadcn.com)",
+      "WebFetch(domain:github.com)",
+      "WebFetch(domain:magicui.design)",
+      "WebFetch(domain:www.shadcn.io)",
+      "Bash(claude mcp:*)",
+      "Bash(python:*)"
+    ]
+  }
+}
