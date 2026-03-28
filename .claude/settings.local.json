@@ -7,7 +7,17 @@
       "WebFetch(domain:magicui.design)",
       "WebFetch(domain:www.shadcn.io)",
       "Bash(claude mcp:*)",
-      "Bash(python:*)"
+      "Bash(python:*)",
+      "Bash(npm --version)",
+      "Bash(pip show:*)",
+      "Bash(pip install:*)",
+      "Bash(npx:*)",
+      "Bash(printf \"1\\\\n\")",
+      "Bash(npm install:*)",
+      "Bash(ls /Users/linmat/Documents/GitHub/YHack2026/frontend/.env*)",
+      "Bash(npm run:*)",
+      "Bash(curl -s http://localhost:8000/health)",
+      "Bash(source venv/bin/activate)"
     ]
   }
 }
