@@ -1,7 +1,7 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from .routers import backtest, market, ml, polymarket, strategy, watchlist
+from .routers import backtest, fusion, market, ml, polymarket, strategy, watchlist
 
 app = FastAPI(title="Rentwise Quant Lab API", version="1.0.0")
 
@@ -19,6 +19,7 @@ app.include_router(backtest.router, prefix="/api")
 app.include_router(watchlist.router, prefix="/api")
 app.include_router(ml.router, prefix="/api")
 app.include_router(polymarket.router, prefix="/api")
+app.include_router(fusion.router, prefix="/api")
 
 
 @app.get("/health")

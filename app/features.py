@@ -78,6 +78,22 @@ def build_feature_lab(
         default=0,
     )
 
+    # Fusion-layer technical score (notebook: yhack_prediction_market_dashboard_lab)
+    # Weights: Trend 35%, MACD 25%, RSI 20%, Breakout 10%, Momentum 10%
+    df["TechnicalScore"] = (
+        0.35 * df["Trend_Signal"]
+        + 0.25 * df["MACD_Signal_Flag"]
+        + 0.20 * df["RSI_Signal"]
+        + 0.10 * df["Breakout_Signal"]
+        + 0.10 * np.sign(df["Momentum_20"].fillna(0))
+    )
+    df["BaseDirection"] = np.select(
+        [df["TechnicalScore"] >= 0.25, df["TechnicalScore"] <= -0.25],
+        ["Long", "Short"],
+        default="Flat",
+    )
+    df["TechnicalConfidence"] = 100 * np.clip(df["TechnicalScore"].abs(), 0, 1)
+
     vol_anchor = df["Volatility_20D"].expanding().median()
     df["Regime"] = np.select(
         [

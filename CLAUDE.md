@@ -2,71 +2,89 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
-## Running the App
+## Architecture Overview
 
+The project has two distinct implementations:
+
+1. **Legacy monolith** — `trading_simulator.py` (single-file Streamlit app, ~1,078 lines)
+2. **Current multi-tier app** — three separate services that work together:
+   - `app/` — modularized Streamlit frontend (refactor of the monolith)
+   - `api/` — FastAPI backend serving REST endpoints
+   - `frontend/` — Next.js frontend that consumes the FastAPI backend
+
+## Running the Services
+
+### Legacy Streamlit (monolith)
 ```bash
 streamlit run trading_simulator.py
 ```
 
-Install dependencies (no `requirements.txt` exists):
+### Current multi-tier stack
 
+**FastAPI backend** (runs on port 8000):
 ```bash
-pip install streamlit plotly yfinance pandas numpy scikit-learn
+uvicorn api.main:app --reload
 ```
 
-## Architecture
+**Streamlit modular app** (uses `app/` package):
+```bash
+streamlit run -c "from app.main import main; main()"
+```
 
-The entire application lives in a single file: `trading_simulator.py` (1,078 lines). There is also `trading_simulator_experiments.ipynb` for testing individual components in isolation.
+**Next.js frontend** (runs on port 3000, connects to FastAPI):
+```bash
+cd frontend && npm run dev
+```
 
-### Execution Flow (`main()`)
+Set `NEXT_PUBLIC_API_URL` to override the API base (default: `http://localhost:8000/api`).
 
-`main()` orchestrates the full pipeline on every Streamlit re-run:
+### Install dependencies
+```bash
+pip install streamlit plotly yfinance pandas numpy scikit-learn fastapi uvicorn requests
+cd frontend && npm install
+```
 
-1. `inject_styles()` / `initialize_state()` / `render_header()` — setup
-2. `sidebar_controls()` → returns a `controls` dict (ticker, dates, strategy, indicator params, feature toggles)
-3. `get_data_cached()` → raw OHLCV `DataFrame`
-4. `build_feature_lab()` → `feature_data` with 25+ indicators
-5. `apply_strategy()` → `(strategy_data, signal_col)` — adds `Signal` column (1=buy, −1=sell, 0=hold)
-6. `run_backtest()` → `backtest` DataFrame with equity curves and drawdown
-7. Six `st.tabs` render the dashboard using the above outputs
+## `api/` — FastAPI Backend
 
-### Data Pipeline
+Entry point: `api/main.py`. Mounts all routers under `/api` prefix with CORS open to localhost:3000/3001.
 
-- **`get_data_cached()`** — fetches OHLCV from Yahoo Finance via `yfinance`; falls back to synthetic data (geometric Brownian motion) on failure. Decorated with `@st.cache_data` keyed on ticker+dates+interval+mode.
-- **`build_feature_lab()`** — computes SMA, EMA, RSI, MACD, Bollinger Bands, ATR, volatility, drawdown, and regime flags from raw OHLCV.
+| Router | Endpoint prefix | Source module |
+|--------|----------------|---------------|
+| market | `/api/data` | `app/data.py` + `app/features.py` |
+| strategy | `/api/strategy` | `app/strategy.py` |
+| backtest | `/api/backtest` | `app/strategy.py` |
+| watchlist | `/api/watchlist` | `app/strategy.py` |
+| ml | `/api/ml` | `app/ml.py` |
+| polymarket | `/api/polymarket/*` | `app/polymarket.py` |
 
-### Trading Strategies (`apply_strategy()`)
+Shared query parameter types are defined in `api/deps.py` as `Annotated` aliases (e.g. `TickerQ`, `RsiWindowQ`) and reused across routers.
 
-Five rule-based strategies selected via sidebar; all produce a `Signal` column on the DataFrame:
-- **RSI** — RSI < 30 = buy, RSI > 70 = sell
-- **Trend** — price vs SMA-20 crossover
-- **MACD** — MACD histogram sign changes
-- **Breakout** — Bollinger Band breakouts
-- **Ensemble** — weighted blend (35% RSI + 35% Trend + 20% MACD + 10% Breakout)
+## `app/` — Streamlit Modular App
 
-### Backtesting (`run_backtest()`)
+Refactored version of `trading_simulator.py` split into focused modules. `app/main.py:main()` orchestrates the same pipeline as the monolith:
 
-Simulates strategy execution with position sizing, configurable trading fees (bps), equity curve tracking, drawdown calculation, and comparison to a buy-and-hold benchmark.
+1. `ui.py` — `inject_styles()`, `initialize_state()`, `render_header()`, `sidebar_controls()` → `controls` dict
+2. `data.py` — `get_data_cached()` → raw OHLCV DataFrame (Yahoo Finance + GBM fallback)
+3. `features.py` — `build_feature_lab()` → 25+ indicators; `add_horizon_features()`, `prepare_modeling_frame()`
+4. `strategy.py` — `apply_strategy()` → Signal column (1=buy, −1=sell, 0=hold); `run_backtest()`, `build_watchlist_pulse()`, `compute_stress_feed()`
+5. `ml.py` — `walk_forward_random_forest()` — 250-tree RF, 5 seeds, 70/30 walk-forward split
+6. `charts.py` — Plotly figure builders: `price_chart`, `backtest_chart`, `ml_chart`, `blended_equity_chart`, `correlation_chart`
+7. `polymarket.py` — Polymarket Gamma API integration (cached 300s); renders prediction market tab
 
-### ML Layer (`walk_forward_random_forest()`)
+The five trading strategies (RSI, Trend, MACD, Breakout, Ensemble) and their signal logic live entirely in `app/strategy.py`.
 
-Walk-forward Random Forest (250 trees, depth 6, 5 ensemble seeds). Trains on the first 70% of data, validates on the remaining 30%. In the Quant Lab tab, ML signals are blended 35%/65% with rule-based signals: `signal_mix = 0.65 * rule_signal + 0.35 * ml_signal`.
+## `frontend/` — Next.js App
 
-### Dashboard (6 Tabs)
+Single-page dashboard at `frontend/app/page.tsx`. State management is plain React (`useState`/`useEffect`) — no external state library.
 
-| Tab | Content |
-|-----|---------|
-| Overview | Market snapshot, stress event feed, strategy report card |
-| Charts | Price+signals, RSI/MACD, volatility/drawdown |
-| Backtest | Equity curves, return/risk metrics, hit rates |
-| Watchlist | Pulse scan across multiple tickers |
-| Quant Lab | ML forecasts, horizon scorecard, blended strategy equity curve |
-| Raw Data | Raw OHLCV table and computed feature table |
+**Key files:**
+- `lib/api.ts` — typed `api` object wrapping all fetch calls; reads `NEXT_PUBLIC_API_URL`
+- `lib/types.ts` — TypeScript interfaces mirroring all API response shapes
+- `lib/extractTicker.ts` — heuristic to extract a stock ticker from a Polymarket question string
+- `components/tabs/` — `ChartsTab`, `BacktestTab`, `WatchlistTab`, `QuantLabTab`, `PredictionMarketsTab`
+- `components/charts/` — Recharts-based chart components (`PriceChart`, `EquityChart`, `RSIMACDChart`, `PolymarketChart`)
+- `components/ui/` — shadcn/ui primitives (badge, button, card, select, table, tabs)
 
-### Sidebar Controls
+**Data flow:** On load, the page fetches trending Polymarket markets. Selecting a market auto-extracts a ticker via `extractTicker()`, which triggers parallel fetches of `/api/data`, `/api/strategy`, and `/api/backtest`. The Quant Lab tab lazily triggers `/api/ml` only when first activated.
 
-Returned as a single `controls` dict from `sidebar_controls()`. Key fields: `ticker`, `start_date`, `end_date`, `interval`, `data_mode` (Auto/Live/Synthetic), `strategy_choice`, indicator windows (`rsi_window`, `fast_window`, `slow_window`, `trend_window`, `long_trend_window`, `vol_window`), `fee_bps`, `watchlist`, `benchmark`, and boolean toggles `show_ml`, `show_watchlist`, `show_correlation`, `show_raw`.
-
-### Session State
-
-`initialize_state()` seeds `st.session_state` with default ticker (`AAPL`) and date range (1 year). Quick-ticker buttons in `quick_ticker_buttons()` mutate `st.session_state.ticker` to trigger re-runs.
+> **Note:** `frontend/AGENTS.md` warns that this Next.js version may have breaking API changes from standard training data. Check `node_modules/next/dist/docs/` before writing Next.js-specific code.
