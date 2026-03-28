@@ -23,153 +23,301 @@ def inject_styles() -> None:
     st.markdown(
         """
         <style>
+        @import url('https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;800&family=Barlow:wght@300;400;600;700&family=JetBrains+Mono:wght@300;400;500;600&display=swap');
+
         :root {
-            --rw-text: #e5eefc;
-            --rw-muted: #bfd0ef;
-            --rw-panel: rgba(21, 34, 63, 0.86);
-            --rw-panel-2: rgba(35, 52, 88, 0.88);
-            --rw-accent: #7dd3fc;
-            --rw-accent-2: #f8d48f;
-            --rw-border: rgba(185, 211, 255, 0.18);
-            --rw-button-bg: linear-gradient(180deg, #edf4ff, #d8e7ff);
-            --rw-button-text: #14325c;
-            --rw-button-border: rgba(20, 50, 92, 0.18);
-            --rw-tab-bg: rgba(223, 234, 255, 0.12);
-            --rw-tab-text: #dbeafe;
-            --rw-tab-active-bg: linear-gradient(180deg, rgba(125, 211, 252, 0.22), rgba(59, 130, 246, 0.20));
-            --rw-tab-active-text: #ffffff;
+            --bg-base: #08090f;
+            --bg-panel: #0f1018;
+            --bg-panel-2: #141520;
+            --accent: #d97706;
+            --accent-bright: #f59e0b;
+            --accent-sky: #38bdf8;
+            --buy: #22c55e;
+            --sell: #f43f5e;
+            --text: #f0f4f8;
+            --muted: #8892a4;
+            --faint: #4a5568;
+            --border: rgba(255,255,255,0.07);
+            --border-amber: rgba(217,119,6,0.3);
         }
+
+        html, body, .stApp {
+            font-family: 'Barlow', sans-serif;
+            color: var(--text);
+        }
+
         .stApp {
             background:
-                radial-gradient(circle at top left, rgba(253, 186, 116, 0.14), transparent 28%),
-                radial-gradient(circle at top right, rgba(125, 211, 252, 0.16), transparent 34%),
-                linear-gradient(160deg, #091320 0%, #10203a 40%, #17325a 100%);
-            color: var(--rw-text);
+                radial-gradient(ellipse at 15% 8%, rgba(217,119,6,0.08) 0%, transparent 48%),
+                radial-gradient(ellipse at 85% 88%, rgba(56,189,248,0.05) 0%, transparent 48%),
+                var(--bg-base);
         }
+
         .block-container {
-            padding-top: 1.2rem;
+            padding-top: 1rem;
             padding-bottom: 2rem;
         }
+
+        /* HERO */
         .hero {
-            padding: 1.4rem 1.6rem;
-            border-radius: 22px;
-            background: linear-gradient(135deg, rgba(30, 46, 84, 0.94), rgba(22, 75, 135, 0.88));
-            border: 1px solid var(--rw-border);
-            box-shadow: 0 16px 42px rgba(0, 0, 0, 0.28);
-            margin-bottom: 1rem;
+            padding: 1.8rem 2.2rem 1.5rem;
+            border-radius: 2px;
+            background: linear-gradient(135deg, #0f1018 0%, #13152a 100%);
+            border: 1px solid var(--border-amber);
+            border-left: 4px solid var(--accent-bright);
+            margin-bottom: 1.4rem;
+            position: relative;
+            overflow: hidden;
         }
+
+        .hero::after {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0;
+            height: 1px;
+            background: linear-gradient(90deg, var(--accent-bright) 0%, var(--accent-sky) 55%, transparent 100%);
+        }
+
+        .hero-eyebrow {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.68rem;
+            color: var(--accent);
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+            margin-bottom: 0.5rem;
+        }
+
         .hero h1 {
             margin: 0;
-            font-size: 2.5rem;
-            color: #fff1bf;
-        }
-        .hero p {
-            margin-top: 0.65rem;
-            color: #edf4ff;
-            font-size: 1rem;
-        }
-        .glass-card {
-            padding: 1rem 1.1rem;
-            border-radius: 18px;
-            background: var(--rw-panel);
-            border: 1px solid var(--rw-border);
-            box-shadow: 0 14px 34px rgba(0,0,0,0.18);
-            margin-bottom: 0.8rem;
-        }
-        .metric-card {
-            padding: 1rem;
-            border-radius: 16px;
-            background: linear-gradient(180deg, var(--rw-panel-2), rgba(27, 42, 73, 0.92));
-            border: 1px solid var(--rw-border);
-            min-height: 120px;
-        }
-        .metric-label {
-            color: #d6e4ff;
-            font-size: 0.88rem;
+            font-family: 'Barlow Condensed', sans-serif;
+            font-weight: 800;
+            font-size: 2.9rem;
+            line-height: 1.0;
+            color: var(--text);
             text-transform: uppercase;
-            letter-spacing: 0.06em;
+            letter-spacing: 0.02em;
         }
+
+        .hero h1 .hl { color: var(--accent-bright); }
+
+        .hero-meta {
+            margin-top: 0.7rem;
+            font-size: 0.86rem;
+            color: var(--muted);
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            flex-wrap: wrap;
+        }
+
+        .live-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.35rem;
+            padding: 0.18rem 0.6rem;
+            background: rgba(34,197,94,0.1);
+            border: 1px solid rgba(34,197,94,0.35);
+            border-radius: 2px;
+            color: #22c55e;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.68rem;
+            font-weight: 600;
+            letter-spacing: 0.16em;
+        }
+
+        .live-badge::before {
+            content: '';
+            width: 5px;
+            height: 5px;
+            background: #22c55e;
+            border-radius: 50%;
+            animation: blink-dot 2s ease-in-out infinite;
+        }
+
+        @keyframes blink-dot {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.15; }
+        }
+
+        /* GLASS CARD */
+        .glass-card {
+            padding: 1.2rem 1.4rem;
+            border-radius: 2px;
+            background: var(--bg-panel);
+            border: 1px solid var(--border);
+            border-left: 3px solid var(--accent-sky);
+            margin-bottom: 0.9rem;
+        }
+
+        /* METRIC CARD */
+        .metric-card {
+            padding: 1rem 1.2rem 1.1rem;
+            border-radius: 2px;
+            background: var(--bg-panel);
+            border: 1px solid var(--border);
+            border-top: 2px solid var(--accent-bright);
+            min-height: 110px;
+        }
+
+        .metric-label {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.66rem;
+            color: var(--faint);
+            text-transform: uppercase;
+            letter-spacing: 0.18em;
+            margin-bottom: 0.35rem;
+        }
+
         .metric-value {
-            color: #ffffff;
-            font-size: 1.8rem;
+            font-family: 'Barlow Condensed', sans-serif;
             font-weight: 700;
+            font-size: 2.1rem;
+            color: var(--text);
+            line-height: 1.1;
+            letter-spacing: -0.01em;
+        }
+
+        .metric-sub {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.71rem;
+            color: var(--muted);
             margin-top: 0.35rem;
         }
-        .metric-sub {
-            color: var(--rw-muted);
-            margin-top: 0.3rem;
-            font-size: 0.9rem;
-        }
+
+        /* SIGNAL PILLS */
         .pill-buy, .pill-sell, .pill-neutral {
-            display: inline-block;
-            padding: 0.35rem 0.7rem;
-            border-radius: 999px;
+            display: inline-flex;
+            align-items: center;
+            padding: 0.38rem 0.9rem;
+            border-radius: 2px;
+            font-family: 'Barlow Condensed', sans-serif;
             font-weight: 700;
-            font-size: 0.9rem;
+            font-size: 1rem;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
         }
+
         .pill-buy {
-            background: rgba(34, 197, 94, 0.18);
-            color: #bbf7d0;
-            border: 1px solid rgba(34, 197, 94, 0.4);
+            background: rgba(34,197,94,0.1);
+            color: #86efac;
+            border: 1px solid rgba(34,197,94,0.32);
+            border-left: 3px solid #22c55e;
         }
+
         .pill-sell {
-            background: rgba(248, 113, 113, 0.18);
-            color: #fecaca;
-            border: 1px solid rgba(248, 113, 113, 0.4);
+            background: rgba(244,63,94,0.1);
+            color: #fda4af;
+            border: 1px solid rgba(244,63,94,0.32);
+            border-left: 3px solid #f43f5e;
         }
+
         .pill-neutral {
-            background: rgba(250, 204, 21, 0.18);
-            color: #fde68a;
-            border: 1px solid rgba(250, 204, 21, 0.35);
+            background: rgba(245,158,11,0.1);
+            color: #fcd34d;
+            border: 1px solid rgba(245,158,11,0.28);
+            border-left: 3px solid var(--accent-bright);
         }
-        h1, h2, h3, h4, h5, h6, p, label, span, div {
+
+        /* TYPOGRAPHY */
+        h1, h2, h3, h4, h5, h6 {
+            font-family: 'Barlow Condensed', sans-serif !important;
+            font-weight: 700 !important;
+            letter-spacing: 0.03em !important;
+            text-transform: uppercase !important;
+            color: var(--text) !important;
+        }
+
+        p, label, span, div {
             color: inherit;
         }
-        .stMarkdown, .stText, .stCaption, .stMetric, [data-testid="stMetricLabel"], [data-testid="stMetricValue"] {
-            color: var(--rw-text) !important;
+
+        .stMarkdown, .stText, .stCaption {
+            color: var(--text) !important;
         }
-        .stTabs [data-baseweb="tab-list"] {
-            gap: 0.3rem;
+
+        [data-testid="stMetricLabel"] {
+            font-family: 'JetBrains Mono', monospace !important;
+            font-size: 0.7rem !important;
+            color: var(--faint) !important;
+            text-transform: uppercase !important;
+            letter-spacing: 0.13em !important;
         }
-        .stTabs [data-baseweb="tab"] {
-            background: var(--rw-tab-bg);
-            border-radius: 14px;
-            padding: 0.55rem 0.9rem;
-            color: var(--rw-tab-text) !important;
-            border: 1px solid rgba(191, 219, 254, 0.1);
-        }
-        .stTabs [aria-selected="true"] {
-            background: var(--rw-tab-active-bg) !important;
-            color: var(--rw-tab-active-text) !important;
-            border-bottom: 2px solid #7dd3fc !important;
-        }
-        .stButton > button {
-            background: var(--rw-button-bg) !important;
-            color: var(--rw-button-text) !important;
-            border: 1px solid var(--rw-button-border) !important;
-            border-radius: 14px !important;
+
+        [data-testid="stMetricValue"] {
+            font-family: 'Barlow Condensed', sans-serif !important;
             font-weight: 700 !important;
-            box-shadow: 0 8px 18px rgba(9, 19, 32, 0.16);
+            font-size: 1.9rem !important;
+            color: var(--text) !important;
         }
+
+        /* TABS */
+        .stTabs [data-baseweb="tab-list"] {
+            gap: 0.15rem;
+            background: var(--bg-panel);
+            border-radius: 2px;
+            padding: 0.25rem;
+            border: 1px solid var(--border);
+        }
+
+        .stTabs [data-baseweb="tab"] {
+            background: transparent;
+            border-radius: 2px;
+            padding: 0.5rem 1rem;
+            color: var(--muted) !important;
+            font-family: 'Barlow', sans-serif;
+            font-weight: 600;
+            font-size: 0.8rem;
+            letter-spacing: 0.07em;
+            text-transform: uppercase;
+            border: none !important;
+        }
+
+        .stTabs [aria-selected="true"] {
+            background: var(--accent-bright) !important;
+            color: #07080f !important;
+            border-bottom: none !important;
+        }
+
+        /* BUTTONS */
+        .stButton > button {
+            background: transparent !important;
+            color: var(--text) !important;
+            border: 1px solid var(--border-amber) !important;
+            border-radius: 2px !important;
+            font-family: 'Barlow', sans-serif !important;
+            font-weight: 700 !important;
+            font-size: 0.8rem !important;
+            letter-spacing: 0.08em !important;
+            text-transform: uppercase !important;
+            transition: all 0.14s ease !important;
+            box-shadow: none !important;
+        }
+
         .stButton > button:hover {
-            background: linear-gradient(180deg, #ffffff, #dbeafe) !important;
-            color: #0f2748 !important;
-            border-color: rgba(20, 50, 92, 0.3) !important;
+            background: var(--accent-bright) !important;
+            color: #08090f !important;
+            border-color: var(--accent-bright) !important;
         }
+
         .stButton > button p,
         .stButton > button span,
         .stButton > button div {
-            color: var(--rw-button-text) !important;
+            color: inherit !important;
         }
+
+        /* INPUTS */
         .stTextInput input,
         .stTextArea textarea,
         .stDateInput input,
         .stSelectbox [data-baseweb="select"] > div,
         .stNumberInput input {
-            background: rgba(255,255,255,0.96) !important;
-            color: #1e293b !important;
-            border-radius: 12px !important;
+            background: rgba(255,255,255,0.95) !important;
+            color: #0d0e1a !important;
+            border-radius: 2px !important;
+            font-family: 'JetBrains Mono', monospace !important;
+            font-size: 0.86rem !important;
         }
+
         .stTextInput label,
         .stTextArea label,
         .stDateInput label,
@@ -177,26 +325,45 @@ def inject_styles() -> None:
         .stRadio label,
         .stSlider label,
         .stCheckbox label {
-            color: #26364f !important;
-            font-weight: 600;
+            color: #2a2e42 !important;
+            font-family: 'Barlow', sans-serif !important;
+            font-weight: 700 !important;
+            font-size: 0.76rem !important;
+            letter-spacing: 0.07em !important;
+            text-transform: uppercase !important;
         }
+
+        /* SIDEBAR */
         .stSidebar .stMarkdown,
         .stSidebar .stText,
         .stSidebar p,
         .stSidebar div,
         .stSidebar span {
-            color: #26364f;
+            color: #1a1e30;
         }
+
         div[data-testid="stSidebar"] {
-            background: linear-gradient(180deg, #eef4ff 0%, #dfe9fb 100%);
+            background: linear-gradient(180deg, #f2f3fa 0%, #e8eaf5 100%);
         }
+
         div[data-testid="stSidebar"] [data-testid="stVerticalBlock"] {
             padding-top: 0.5rem;
         }
+
+        /* DATAFRAMES */
         [data-testid="stDataFrame"], [data-testid="stTable"] {
-            background: rgba(255,255,255,0.02);
-            border-radius: 14px;
+            background: var(--bg-panel);
+            border-radius: 2px;
+            border: 1px solid var(--border);
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.82rem;
         }
+
+        /* SCROLLBAR */
+        ::-webkit-scrollbar { width: 5px; height: 5px; }
+        ::-webkit-scrollbar-track { background: var(--bg-base); }
+        ::-webkit-scrollbar-thumb { background: rgba(217,119,6,0.45); border-radius: 2px; }
+        ::-webkit-scrollbar-thumb:hover { background: var(--accent-bright); }
         </style>
         """,
         unsafe_allow_html=True,
@@ -692,11 +859,22 @@ def price_chart(strategy_df: pd.DataFrame, ticker: str) -> go.Figure:
         col=1,
     )
 
+    _chart_base = dict(
+        paper_bgcolor="rgba(15,16,24,0)",
+        plot_bgcolor="rgba(15,16,24,0.55)",
+        font=dict(family="JetBrains Mono, monospace", color="#8892a4", size=10),
+        xaxis=dict(gridcolor="rgba(255,255,255,0.05)", linecolor="rgba(255,255,255,0.09)", zerolinecolor="rgba(255,255,255,0.05)"),
+        yaxis=dict(gridcolor="rgba(255,255,255,0.05)", linecolor="rgba(255,255,255,0.09)", zerolinecolor="rgba(255,255,255,0.05)"),
+    )
     fig.update_layout(
-        template="plotly_dark",
+        **_chart_base,
         height=900,
         margin=dict(l=20, r=20, t=70, b=20),
-        legend=dict(orientation="h", yanchor="bottom", y=1.02, xanchor="left", x=0),
+        legend=dict(
+            orientation="h", yanchor="bottom", y=1.02, xanchor="left", x=0,
+            bgcolor="rgba(15,16,24,0.85)", bordercolor="rgba(255,255,255,0.1)", borderwidth=1,
+            font=dict(family="JetBrains Mono, monospace", size=11),
+        ),
     )
     fig.update_xaxes(rangeslider_visible=False)
     return fig
@@ -706,7 +884,15 @@ def backtest_chart(backtest: pd.DataFrame) -> go.Figure:
     fig = go.Figure()
     fig.add_trace(go.Scatter(x=backtest.index, y=backtest["StrategyEquity"], name="Strategy Equity", line=dict(color="#22c55e", width=3)))
     fig.add_trace(go.Scatter(x=backtest.index, y=backtest["BuyHoldEquity"], name="Buy & Hold", line=dict(color="#38bdf8", width=2)))
-    fig.update_layout(template="plotly_dark", height=420, margin=dict(l=20, r=20, t=40, b=20), title="Backtest Equity Curve")
+    fig.update_layout(
+        paper_bgcolor="rgba(15,16,24,0)", plot_bgcolor="rgba(15,16,24,0.55)",
+        font=dict(family="JetBrains Mono, monospace", color="#8892a4", size=10),
+        height=420, margin=dict(l=20, r=20, t=44, b=20),
+        title=dict(text="Backtest Equity Curve", font=dict(family="Barlow Condensed, sans-serif", size=17, color="#f0f4f8")),
+        xaxis=dict(gridcolor="rgba(255,255,255,0.05)", linecolor="rgba(255,255,255,0.09)"),
+        yaxis=dict(gridcolor="rgba(255,255,255,0.05)", linecolor="rgba(255,255,255,0.09)"),
+        legend=dict(bgcolor="rgba(15,16,24,0.85)", bordercolor="rgba(255,255,255,0.1)", borderwidth=1),
+    )
     return fig
 
 
@@ -715,10 +901,12 @@ def correlation_chart(correlation_series: pd.Series, ticker: str, benchmark: str
     fig.add_trace(go.Scatter(x=correlation_series.index, y=correlation_series, name="Rolling Correlation", line=dict(color="#f59e0b", width=3)))
     fig.add_hline(y=0, line_color="#94a3b8", line_dash="dash")
     fig.update_layout(
-        template="plotly_dark",
-        height=360,
-        margin=dict(l=20, r=20, t=40, b=20),
-        title=f"20-Period Correlation: {ticker} vs {benchmark}",
+        paper_bgcolor="rgba(15,16,24,0)", plot_bgcolor="rgba(15,16,24,0.55)",
+        font=dict(family="JetBrains Mono, monospace", color="#8892a4", size=10),
+        height=360, margin=dict(l=20, r=20, t=44, b=20),
+        title=dict(text=f"20-Period Correlation: {ticker} vs {benchmark}", font=dict(family="Barlow Condensed, sans-serif", size=17, color="#f0f4f8")),
+        xaxis=dict(gridcolor="rgba(255,255,255,0.05)", linecolor="rgba(255,255,255,0.09)"),
+        yaxis=dict(gridcolor="rgba(255,255,255,0.05)", linecolor="rgba(255,255,255,0.09)"),
     )
     return fig
 
@@ -727,7 +915,15 @@ def ml_chart(valid: pd.DataFrame) -> go.Figure:
     fig = go.Figure()
     fig.add_trace(go.Scatter(x=valid.index, y=valid["TargetNextReturn"], name="Actual Next Return", line=dict(color="#38bdf8")))
     fig.add_trace(go.Scatter(x=valid.index, y=valid["PredictedNextReturn"], name="Predicted Next Return", line=dict(color="#f472b6")))
-    fig.update_layout(template="plotly_dark", height=360, margin=dict(l=20, r=20, t=40, b=20), title="Walk-Forward ML Forecast")
+    fig.update_layout(
+        paper_bgcolor="rgba(15,16,24,0)", plot_bgcolor="rgba(15,16,24,0.55)",
+        font=dict(family="JetBrains Mono, monospace", color="#8892a4", size=10),
+        height=360, margin=dict(l=20, r=20, t=44, b=20),
+        title=dict(text="Walk-Forward ML Forecast", font=dict(family="Barlow Condensed, sans-serif", size=17, color="#f0f4f8")),
+        xaxis=dict(gridcolor="rgba(255,255,255,0.05)", linecolor="rgba(255,255,255,0.09)"),
+        yaxis=dict(gridcolor="rgba(255,255,255,0.05)", linecolor="rgba(255,255,255,0.09)"),
+        legend=dict(bgcolor="rgba(15,16,24,0.85)", bordercolor="rgba(255,255,255,0.1)", borderwidth=1),
+    )
     return fig
 
 
@@ -745,12 +941,12 @@ def render_header() -> None:
     st.markdown(
         """
         <div class="hero">
-            <h1>Rentwise Quant Lab</h1>
-            <p>
-                Glossy Streamlit trading simulator with live or synthetic market data, multiple rule-based strategies,
-                feature diagnostics, backtesting, watchlist pulse scans, benchmark correlation, and a lightweight
-                walk-forward machine learning layer.
-            </p>
+            <div class="hero-eyebrow">quantitative research terminal &middot; v2.4</div>
+            <h1>Rentwise <span class="hl">Quant Lab</span></h1>
+            <div class="hero-meta">
+                <span class="live-badge">LIVE</span>
+                Rule-based strategies &middot; Walk-forward ML &middot; Multi-asset backtesting &middot; Watchlist pulse
+            </div>
         </div>
         """,
         unsafe_allow_html=True,
@@ -759,7 +955,7 @@ def render_header() -> None:
 
 def sidebar_controls() -> dict:
     with st.sidebar:
-        st.markdown("## Control Deck")
+        st.markdown("## Control Deck\n---")
         st.text_input("Primary ticker", key="ticker_input")
         st.text_input("Benchmark", key="benchmark_input")
         st.text_area("Watchlist", key="watchlist_text", height=80)
@@ -1051,7 +1247,15 @@ def main() -> None:
                     fig = go.Figure()
                     fig.add_trace(go.Scatter(x=blended.index, y=blended["StrategyEquity"], name="Rule-Based", line=dict(color="#38bdf8", width=3)))
                     fig.add_trace(go.Scatter(x=blended.index, y=blended["BlendedEquity"], name="Blended", line=dict(color="#f472b6", width=3)))
-                    fig.update_layout(template="plotly_dark", height=360, margin=dict(l=20, r=20, t=40, b=20), title="Rule-Based vs Blended Equity")
+                    fig.update_layout(
+                        paper_bgcolor="rgba(15,16,24,0)", plot_bgcolor="rgba(15,16,24,0.55)",
+                        font=dict(family="JetBrains Mono, monospace", color="#8892a4", size=10),
+                        height=360, margin=dict(l=20, r=20, t=44, b=20),
+                        title=dict(text="Rule-Based vs Blended Equity", font=dict(family="Barlow Condensed, sans-serif", size=17, color="#f0f4f8")),
+                        xaxis=dict(gridcolor="rgba(255,255,255,0.05)", linecolor="rgba(255,255,255,0.09)"),
+                        yaxis=dict(gridcolor="rgba(255,255,255,0.05)", linecolor="rgba(255,255,255,0.09)"),
+                        legend=dict(bgcolor="rgba(15,16,24,0.85)", bordercolor="rgba(255,255,255,0.1)", borderwidth=1),
+                    )
                     st.plotly_chart(fig, use_container_width=True)
             except Exception as exc:
                 st.warning(f"ML layer could not be completed: {exc}")
