@@ -17,7 +17,12 @@
       "Bash(ls /Users/linmat/Documents/GitHub/YHack2026/frontend/.env*)",
       "Bash(npm run:*)",
       "Bash(curl -s http://localhost:8000/health)",
-      "Bash(source venv/bin/activate)"
+      "Bash(source venv/bin/activate)",
+      "WebFetch(domain:docs.polymarket.com)",
+      "Bash(curl -s \"https://gamma-api.polymarket.com/markets?active=true&limit=5&order=volume&ascending=false\")",
+      "Bash(python3 -c \"import json,sys; data=json.load\\(sys.stdin\\); m=data[0]; print\\(''''Keys:'''', list\\(m.keys\\(\\)\\)[:20]\\); print\\(''''clobTokenIds:'''', m.get\\(''''clobTokenIds''''\\)\\); print\\(''''outcomePrices:'''', m.get\\(''''outcomePrices''''\\)\\); print\\(''''volume:'''', m.get\\(''''volume''''\\)\\); print\\(''''question:'''', m.get\\(''''question''''\\)[:80]\\)\")",
+      "Bash(TOKEN=\"51016507619180924665597559307500966371300359990730628147295374239685630001225\" curl -s \"https://clob.polymarket.com/prices-history?market=$TOKEN&interval=1w&fidelity=60\")",
+      "Bash(python3 -c \"import json,sys; print\\(''''midpoint:'''', json.load\\(sys.stdin\\)\\)\")"
     ]
   }
 }
